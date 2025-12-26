@@ -1,0 +1,9 @@
+# ignore all compiled programs (doesn't have file extension)
+*
+!*/
+!*.*
+
+*.hi
+*.o
+input
+.DS_Store
