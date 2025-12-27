@@ -5,8 +5,12 @@ main = do
 getRange :: [String] -> [(Int, Int)]
 getRange ranges = [(read (head rangeList), read (last rangeList)) | range <- ranges, let rangeList = split range '-']
 
+repeatsWith :: String -> String -> Bool
+repeatsWith "" _ = True
+repeatsWith s rep = take (length rep) s == rep && repeatsWith (drop (length rep) s) rep
+
 isInvalid :: Int -> Bool
-isInvalid x = even (length strX) && take (length strX `div` 2) strX == drop (length strX `div` 2) strX where strX = show x
+isInvalid x = any (\n -> repeatsWith strX (take n strX)) [1 .. (length strX `div` 2)] where strX = show x
 
 numInvalids :: (Int, Int) -> Int
 numInvalids (start, end)
