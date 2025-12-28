@@ -10,8 +10,12 @@ totalJoltage contents = show (sum [bankJoltage (parseBank bank) | bank <- words 
 parseBank :: String -> [Int]
 parseBank = map digitToInt
 
+bankJoltage' :: [Int] -> Int -> Int
+bankJoltage' _ 0 = 0
+bankJoltage' bank batteryNum = firstVal * 10 ^ (batteryNum - 1) + bankJoltage' (drop (firstIdx + 1) bank) (batteryNum - 1) where (firstVal, firstIdx) = maxIdx (take (length bank - batteryNum + 1) bank)
+
 bankJoltage :: [Int] -> Int
-bankJoltage bank = (firstVal * 10) + maximum (drop (firstIdx + 1) bank) where (firstVal, firstIdx) = maxIdx (init bank)
+bankJoltage bank = bankJoltage' bank 12
 
 tupleMax :: (Ord a) => (a, Int) -> (a, Int) -> (a, Int)
 tupleMax (x1, x2) (y1, y2)
