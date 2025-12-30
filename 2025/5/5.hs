@@ -1,6 +1,21 @@
+import Data.List
+
 main = do
   contents <- getContents
-  print (countFresh (parseInput contents))
+  print (numFreshIds (parseInput contents))
+
+numInRange start end
+  | end - start < 0 = 0
+  | otherwise = end - start + 1
+
+calculateStart start ranges idx
+  | idx == 0 = start
+  | otherwise = max start (snd (ranges !! (idx - 1)) + 1)
+
+splitRanges [] _ = []
+splitRanges ((start, end) : ranges) lastEnd = (max start (lastEnd + 1), end) : splitRanges ranges (max lastEnd end)
+
+numFreshIds (ranges, _) = sum [numInRange start end | (start, end) <- splitRanges (sortOn fst ranges) (-1)]
 
 inRange :: (Int, Int) -> Int -> Bool
 inRange (start, end) id = start <= id && id <= end
