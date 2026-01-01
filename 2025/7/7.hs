@@ -4,7 +4,31 @@ import Data.Set
 
 main = do
   contents <- getContents
-  print (numBeams (words contents))
+  print (numTimelines (parseContents contents) (fromJust (elemIndex 'S' contents)) 0)
+
+addToSet :: (Set Int, Int) -> Char -> (Set Int, Int)
+addToSet (currSet, idx) char
+  | char == '^' = (Data.Set.insert idx currSet, idx + 1)
+  | otherwise = (currSet, idx + 1)
+
+calculateNewSet :: String -> Set Int
+calculateNewSet line = fst (Data.List.foldl addToSet (Data.Set.empty, 0) line)
+
+findSplitterSet :: [String] -> [Set Int]
+findSplitterSet lines = [calculateNewSet line | line <- lines]
+
+parseContents :: String -> [Set Int]
+parseContents contents = findSplitterSet (tail (words contents))
+
+numTimelines :: [Set Int] -> Int -> Int -> Int
+numTimelines lines p' l' = memo !! p' !! l'
+  where
+    memo = [[self p l | l <- [0 ..]] | p <- [0 ..]]
+
+    self position lineNum
+      | length lines == lineNum = 1
+      | member position (lines !! lineNum) = memo !! (position - 1) !! (lineNum + 1) + memo !! (position + 1) !! (lineNum + 1)
+      | otherwise = memo !! position !! (lineNum + 1)
 
 initialSet :: [String] -> Set Int
 initialSet lines = fromList [fromJust (elemIndex 'S' (head lines))]
