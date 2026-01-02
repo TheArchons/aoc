@@ -134,15 +134,9 @@ int main() {
 
     ifstream input("input");
 
-    long long numConnections;
-    input >> numConnections;
-
-    cout << numConnections <<endl;
-
     vector<string> lines;
 
     string line;
-    getline(input, line);
     while (getline(input, line)) {
         lines.push_back(line);
     }
@@ -167,28 +161,15 @@ int main() {
         dsu.make_set(i);
     }
 
-    for (long long i = 0; i < numConnections; i++) {
+    for (long long i = 0;; i++) {
         Connection connection = pq.top();
         pq.pop();
         dsu.setUnion(connection.a, connection.b);
-    }
-
-    priority_queue<long long> sizes;
-
-    for (long long i = 0; i < vecs.size(); i++) {
-        if (dsu.is_representative(i)) {
-            sizes.push(dsu.size(i));
+        if (dsu.size(dsu.find_representative(connection.a)) == vecs.size()) {
+            cout << vecs.at(connection.a).at(0) *  vecs.at(connection.b).at(0);
+            break;
         }
     }
-
-    long long sizeProduct = 1;
-
-    for (long long i = 0; i < 3; i++) {
-        sizeProduct *= sizes.top();
-        sizes.pop();
-    }
-
-    cout << sizeProduct;
 
     return 0;
 }
